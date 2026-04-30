@@ -50,10 +50,10 @@ export default function ModelSelector() {
     <RadioGroup
       value={model_name}
       onValueChange={handleChange}
-      className='grid w-full grid-cols-3 gap-4 '
+      className='grid w-full grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 lg:gap-4'
     >
       {modelItems.map((item) => (
-        <FieldLabel key={item.value} htmlFor={item.value} className='relative py-1 cursor-pointer'>
+        <FieldLabel key={item.value} htmlFor={item.value} className='relative py-1 cursor-pointer overflow-hidden'>
           <Field orientation='horizontal'>
             <FieldTitle className='flex flex-col items-start'>
               <div className='w-full flex items-center gap-2'>

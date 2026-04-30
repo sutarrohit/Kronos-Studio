@@ -66,7 +66,7 @@ const InfoPanel = () => {
   ];
 
   return (
-    <div className='flex gap-4'>
+    <div className='grid w-full grid-cols-1 md:grid-cols-3 gap-2 lg:gap-4'>
       {DashboardData.map((item, index) => (
         <Card key={item.label} className='flex-1 gap-1 p-4 relative'>
           {index === 2 && (

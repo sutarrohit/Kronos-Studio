@@ -4,7 +4,6 @@ import Link from "next/link";
 import { endpoint } from "@/utils/handleAPI";
 import Controllers from "@/components/controllers/Controllers";
 import Dashboard from "@/components/dashboard/Dashboard";
-import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   return (
@@ -26,16 +25,22 @@ export default function Home() {
             <Link href='/saved-results'>
               <span className=' border border-muted-foreground/40 bg-muted px-3 py-1'>Saved Results</span>
             </Link>
+
             {/* <Separator orientation="vertical"  className="bg-muted-foreground"/> */}
-            <Link href={endpoint("/scalar")} target='_blank'>
-              <span className='border border-muted-foreground/40 px-3 py-1 bg-muted'>API: localhost:8000</span>
+            <Link href='http://localhost:8000/scalar' target='_blank'>
+              <span className='hidden md:flex border border-muted-foreground/40 px-3 py-1 bg-muted'>
+                API: localhost:8000
+              </span>
             </Link>
-            <span className='border px-3 py-1 border-emerald-500/40 bg-emerald-500/20 text-emerald-400 '>Ready</span>
+
+            <span className='hidden md:flex border px-3 py-1 border-emerald-500/40 bg-emerald-500/20 text-emerald-400 '>
+              Ready
+            </span>
           </div>
         </div>
       </header>
 
-      <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 sm:px-8 py-4 flex-1'>
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 sm:px-8 py-4 flex-1'>
         <div className='w-full col-span-1 flex-1'>
           <Controllers />
         </div>

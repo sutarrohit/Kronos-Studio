@@ -58,9 +58,7 @@ const Dashboard = () => {
       setActiveResultIndex(index);
       // Two rAF calls: first lets React flush the state update,
       // second lets Recharts commit its SVG paint.
-      await new Promise<void>((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-      );
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
       return chartRef.current;
     },
     [setActiveResultIndex]
@@ -74,7 +72,7 @@ const Dashboard = () => {
         </CardHeader>
 
         <CardContent className='flex-1'>
-          <div className='flex flex-col gap-4 h-full'>
+          <div className='flex flex-col gap-1 h-full'>
             <div className='flex items-center justify-between'>
               <div className='flex flex-col gap-0'>
                 <h2 className='text-base font-semibold'>Prediction preview</h2>
@@ -113,7 +111,7 @@ const Dashboard = () => {
                     <ComboboxContent>
                       <ComboboxList>
                         {batchOptions.map((opt) => (
-                          <ComboboxItem key={opt.value} value={opt.label} className="cursor-pointer">
+                          <ComboboxItem key={opt.value} value={opt.label} className='cursor-pointer'>
                             <div className='flex flex-col gap-0.5'>
                               <span className='font-medium'>{opt.label}</span>
                               <span className='text-[11px] text-muted-foreground uppercase'>{opt.detail}</span>
