@@ -107,7 +107,7 @@ Open two terminals:
 ```bash
 # Terminal 1 — Backend
 cd server
-uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+uv run .\start_server.py
 
 # Terminal 2 — Frontend
 cd frontend
