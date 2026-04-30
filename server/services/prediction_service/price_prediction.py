@@ -161,6 +161,6 @@ class PricePredictionService:
 
     def _timestamp_to_json(self, timestamp):
         """Convert one timestamp value into an ISO string for JSON responses."""
-        return (
-            timestamp.isoformat() if hasattr(timestamp, "isoformat") else str(timestamp)
-        )
+        if hasattr(timestamp, "strftime"):
+            return timestamp.strftime("%Y-%m-%dT%H:%M:%S")
+        return str(timestamp)
