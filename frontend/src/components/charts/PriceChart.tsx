@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  LineChart,
   Line,
   CartesianGrid,
   XAxis,
@@ -10,15 +9,17 @@ import {
   Legend,
   ResponsiveContainer,
   ComposedChart,
-  ReferenceLine
+  ReferenceLine,
+  Bar
 } from "recharts";
 import { type PricePredictionResponse } from "@/schemas/predictionSchema";
 
 type PriceChartProps = {
   data: PricePredictionResponse | null;
+  showVolume?: boolean;
 };
 
-const PriceChart = ({ data }: PriceChartProps) => {
+const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
   if (!data) {
     return null;
   }
@@ -27,6 +28,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
     timestamp: item.timestamps,
     price: item.close,
     prediction: null,
+    volume: item.volume,
     type: "history"
   }));
 
@@ -34,6 +36,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
     timestamp: item.timestamps,
     price: null,
     prediction: item.close,
+    volume: item.volume,
     type: "prediction"
   }));
 
@@ -46,11 +49,12 @@ const PriceChart = ({ data }: PriceChartProps) => {
 
   const padding = (maxPrice - minPrice) * 0.1; // 10% padding
 
-  // const yMin = Math.floor((minPrice - padding) / 1000) * 1200;
-  // const yMax = Math.ceil((maxPrice + padding) / 1000) * 100;
-
   const yMin = Math.floor(minPrice - padding);
   const yMax = Math.ceil(maxPrice + padding);
+
+  const allVolumes = allData.map((d) => d.volume).filter((v) => v !== null && v !== undefined) as number[];
+  const maxVolume = Math.max(...allVolumes);
+  const volumeDomain = [0, maxVolume * 1.08]; // 8% padding
 
   const predictionStartDate = data.prediction_start_timestamp;
 
@@ -74,6 +78,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
             padding={{ left: 40, right: 0 }}
           />
 
+          {/* Price Y-axis */}
           <YAxis
             domain={[yMin, yMax]}
             tickLine={false}
@@ -83,11 +88,39 @@ const PriceChart = ({ data }: PriceChartProps) => {
             tickFormatter={(value) => `$${value.toLocaleString()}`}
           />
 
+          {/* Volume Y-axis */}
+          {showVolume && (
+            <YAxis
+              yAxisId='volume'
+              orientation='right'
+              domain={volumeDomain}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={10}
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) => {
+                if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+                if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+                return value.toString();
+              }}
+            />
+          )}
+
           <Tooltip
             labelFormatter={(value) => new Date(value).toLocaleString()}
-            formatter={(value) => {
+            formatter={(value, name, props) => {
               if (value === null || value === undefined) return null;
-              return [`$${Number(value).toLocaleString()}`, "Price"];
+
+              const dataKey = props?.dataKey;
+
+              if (dataKey === "volume") {
+                const v = Number(value);
+                if (v >= 1000000) return [`${(v / 1000000).toFixed(2)}M`, "Volume"];
+                if (v >= 1000) return [`${(v / 1000).toFixed(1)}K`, "Volume"];
+                return [v.toString(), "Volume"];
+              }
+
+              return [`$${Number(value).toLocaleString()}`, name];
             }}
             contentStyle={{
               backgroundColor: "oklch(0.214 0.009 43.1)",
@@ -102,7 +135,7 @@ const PriceChart = ({ data }: PriceChartProps) => {
           <ReferenceLine
             x={predictionStartDate}
             stroke='rgba(255,255,255,0.2)'
-            strokeWidth={1}
+            strokeWidth={2}
             strokeDasharray='3 3'
             label={{
               value: "Prediction",
@@ -134,6 +167,17 @@ const PriceChart = ({ data }: PriceChartProps) => {
             name='Predicted Price'
             isAnimationActive={false}
           />
+
+          {/* Volume bars */}
+          {showVolume && (
+            <Bar
+              dataKey='volume'
+              yAxisId='volume'
+              fill='rgba(99, 102, 241, 0.5)'
+              name='Volume'
+              isAnimationActive={false}
+            />
+          )}
         </ComposedChart>
       </ResponsiveContainer>
     </div>
