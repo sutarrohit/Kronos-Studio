@@ -7,7 +7,6 @@ Kronos Studio gives you a no-code interface to run Kronos models, visualize OHLC
 > Kronos paper: [arXiv 2508.02739](https://arxiv.org/abs/2508.02739) · Accepted at **AAAI 2026** </br>
 > Kronos repository: https://github.com/shiyu-coder/Kronos
 
-
 ## What You Can Do
 
 - **Run price predictions** on any crypto or stock ticker using Kronos transformer models
@@ -17,6 +16,7 @@ Kronos Studio gives you a no-code interface to run Kronos models, visualize OHLC
 - **Export results** — download charts as SVG/PNG or raw data as CSV
 - **Save & revisit** — store prediction results in a local SQLite database and browse them later
 
+[Watch Demo](https://www.youtube.com/watch?v=z7dYEWtH8ro)
 
 ## Screenshots
 
@@ -37,7 +37,6 @@ Add up to 20 symbol/source combinations. Run them all at once and switch between
 All saved predictions are stored locally and accessible from the **Saved Results** page. Each entry shows the market, model, interval, and forecast length — along with a full chart replay.
 
 ![Saved results page with SOLUSDT forecast](./docs/screenshots/saved.png)
-
 
 ## Project Structure
 
@@ -64,7 +63,6 @@ Kronos-Studio/
         └── utils/            # Download & export helpers
 ```
 
-
 ## Prerequisites
 
 | Tool                             | Minimum Version | Purpose                  |
@@ -86,7 +84,6 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Or via pip
 pip install uv
 ```
-
 
 ## Getting Started
 
@@ -115,7 +112,6 @@ npm run build && npm run start
 ```
 
 Then open **[http://localhost:3000](http://localhost:3000)**.
-
 
 ## How to Use
 
@@ -155,7 +151,6 @@ Date, Open, High, Low, Close, Volume
 1. Select **Local** as the data source and upload your file.
 2. The server stores it and returns a path this is used automatically for prediction.
 
-
 ## Available Kronos Models
 
 | Model          | Params | Context Length | Best For                          |
@@ -179,11 +174,9 @@ Confirm the backend is running on port `8000` and CORS middleware allows `*` in 
 **CUDA / GPU not detected**
 Set `device` to `"cpu"` in the prediction request, or ensure PyTorch with CUDA support is installed and GPU drivers are up to date.
 
-
 ## Contributing
 
 PRs, ideas, and discussions are welcome! Please open an issue if you have suggestions or find bugs.
-
 
 ## License
 
