@@ -1,6 +1,7 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import PriceChart from "@/components/charts/PriceChart";
 import { Switch } from "@/components/ui/switch";
+import { useChartUIStore } from "@/stores/chartUIStore";
 import { type PricePredictionResponse } from "@/schemas/predictionSchema";
 
 type PredictionChartProps = {
@@ -8,7 +9,8 @@ type PredictionChartProps = {
 };
 
 const PredictionChart = forwardRef<HTMLDivElement, PredictionChartProps>(({ data }, ref) => {
-  const [showVolume, setShowVolume] = useState(false);
+  const showVolume = useChartUIStore((state) => state.showVolume);
+  const setShowVolume = useChartUIStore((state) => state.setShowVolume);
 
   return (
     <div ref={ref} className='h-[520px]'>

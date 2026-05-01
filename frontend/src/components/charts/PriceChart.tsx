@@ -24,7 +24,15 @@ const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
     return null;
   }
 
-  const historyData = data.history.map((item) => ({
+  type ChartPoint = {
+    timestamp: string;
+    price: number | null;
+    prediction: number | null;
+    volume: number;
+    type: string;
+  };
+
+  const historyData: ChartPoint[] = data.history.map((item) => ({
     timestamp: item.timestamps,
     price: item.close,
     prediction: null,
@@ -32,7 +40,7 @@ const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
     type: "history"
   }));
 
-  const predictionData = data.prediction.map((item) => ({
+  const predictionData: ChartPoint[] = data.prediction.map((item) => ({
     timestamp: item.timestamps,
     price: null,
     prediction: item.close,
@@ -40,8 +48,13 @@ const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
     type: "prediction"
   }));
 
+  const firstPrediction = data.prediction[0];
+
+  // Override the first prediction item to include price value
+  predictionData[0].price = firstPrediction.close;
+
   const allData = [...historyData, ...predictionData];
-  // Calculate dynamic Y-axis domain based on data
+
   const allPrices = allData.map((d) => d.price ?? d.prediction).filter((p) => p !== null) as number[];
 
   const minPrice = Math.min(...allPrices);
@@ -164,6 +177,7 @@ const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
             strokeWidth={2.5}
             // strokeDasharray='5 5'
             dot={false}
+            connectNulls={true}
             name='Predicted Price'
             isAnimationActive={false}
           />
