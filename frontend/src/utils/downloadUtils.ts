@@ -308,15 +308,16 @@ function serializeSVG(svg: SVGSVGElement): string {
 // Chart → SVG (download)
 // ---------------------------------------------------------------------------
 
-export function downloadChartAsSVG(chartElement: HTMLElement, filename: string): void {
+export function downloadChartAsSVG(chartElement: HTMLElement, filename: string): boolean {
   const svgEl = chartElement.querySelector(".recharts-wrapper > svg") as SVGSVGElement | null;
-  if (!svgEl) return;
+  if (!svgEl) return false;
 
   const bgColor = getChartBgColor(chartElement);
   const clone = cloneSVGWithInlinedStyles(svgEl, bgColor);
   const svgString = serializeSVG(clone);
   const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
   triggerDownload(blob, filename);
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -331,7 +332,7 @@ export async function downloadChartAsPNG(chartElement: HTMLElement, filename: st
 /** Capture chart element as PNG Blob (also used for ZIP). */
 async function captureChartPNGBlob(chartElement: HTMLElement): Promise<Blob | null> {
   const svgEl = chartElement.querySelector(".recharts-wrapper > svg") as SVGSVGElement | null;
-  if (!svgEl) return null;
+  if (!svgEl) return captureCanvasChartPNGBlob(chartElement);
 
   const bgColor = getChartBgColor(chartElement);
   const clone = cloneSVGWithInlinedStyles(svgEl, bgColor);
@@ -361,6 +362,36 @@ async function captureChartPNGBlob(chartElement: HTMLElement): Promise<Blob | nu
       resolve(null);
     };
     img.src = url;
+  });
+}
+
+/** Capture canvas-based charts, such as TradingView Lightweight Charts. */
+async function captureCanvasChartPNGBlob(chartElement: HTMLElement): Promise<Blob | null> {
+  const canvasEls = Array.from(chartElement.querySelectorAll("canvas"));
+  if (!canvasEls.length) return null;
+
+  const rect = chartElement.getBoundingClientRect();
+  const scale = 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(rect.width) * scale;
+  canvas.height = Math.ceil(rect.height) * scale;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  ctx.scale(scale, scale);
+  ctx.fillStyle = resolveColor(getChartBgColor(chartElement));
+  ctx.fillRect(0, 0, rect.width, rect.height);
+
+  for (const sourceCanvas of canvasEls) {
+    const sourceRect = sourceCanvas.getBoundingClientRect();
+    const x = sourceRect.left - rect.left;
+    const y = sourceRect.top - rect.top;
+    ctx.drawImage(sourceCanvas, x, y, sourceRect.width, sourceRect.height);
+  }
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), "image/png");
   });
 }
 

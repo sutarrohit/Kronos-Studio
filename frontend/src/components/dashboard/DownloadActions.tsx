@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Image02Icon, Download01Icon, ArchiveIcon, Svg01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useChartUIStore } from "@/stores/chartUIStore";
 
 import type { PricePredictionResponse } from "@/schemas/predictionSchema";
 import {
@@ -41,6 +42,8 @@ const DownloadActions = ({
   captureChart
 }: DownloadActionsProps) => {
   const [busy, setBusy] = useState(false);
+  const chartType = useChartUIStore((state) => state.chartType);
+  const isCandlestickChart = chartType === "candlestick";
   const prefix = buildFilenamePrefix(displayResult);
 
   const handlePNG = async () => {
@@ -59,9 +62,18 @@ const DownloadActions = ({
 
   const handleSVG = () => {
     if (!chartRef.current) return;
+    if (isCandlestickChart) {
+      toast.info("SVG export is only available for line charts");
+      return;
+    }
+
     try {
-      downloadChartAsSVG(chartRef.current, `${prefix}.svg`);
-      toast.success("Chart downloaded", { description: `${prefix}.svg` });
+      const exported = downloadChartAsSVG(chartRef.current, `${prefix}.svg`);
+      if (exported) {
+        toast.success("Chart downloaded", { description: `${prefix}.svg` });
+      } else {
+        toast.error("No SVG chart found to download");
+      }
     } catch (e) {
       console.error(e);
       toast.error("Failed to download chart as SVG");
@@ -130,14 +142,16 @@ const DownloadActions = ({
               size='sm'
               className='h-8 w-8 p-0 cursor-pointer'
               onClick={handleSVG}
-              disabled={busy}
+              disabled={busy || isCandlestickChart}
               id='download-chart-svg'
             >
               <HugeiconsIcon icon={Svg01Icon} size={14} strokeWidth={1.8} />
             </Button>
           </TooltipTrigger>
           <TooltipContent side='bottom'>
-            <p className='text-xs'>Download chart as SVG</p>
+            <p className='text-xs'>
+              {isCandlestickChart ? "SVG export is only available for line charts" : "Download chart as SVG"}
+            </p>
           </TooltipContent>
         </Tooltip>
 
@@ -177,7 +191,11 @@ const DownloadActions = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent side='bottom'>
-              <p className='text-xs'>Download all batch results as ZIP (PNG + SVG + CSV)</p>
+              <p className='text-xs'>
+                {isCandlestickChart
+                  ? "Download all batch results as ZIP (PNG + CSV)"
+                  : "Download all batch results as ZIP (PNG + SVG + CSV)"}
+              </p>
             </TooltipContent>
           </Tooltip>
         )}
