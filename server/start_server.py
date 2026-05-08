@@ -7,7 +7,6 @@ Compatible with Windows, macOS, and Linux.
 """
 
 import sys
-import os
 import logging
 from pathlib import Path
 
@@ -32,19 +31,15 @@ logger = logging.getLogger(__name__)
 
 def get_hf_cache_dir() -> Path:
     """
-    Return the HuggingFace hub cache directory, respecting the
-    HF_HOME / HUGGINGFACE_HUB_CACHE env vars that users may have set.
+    Return the HuggingFace hub cache directory using huggingface_hub's
+    resolved constants.
 
-    Priority (mirrors huggingface_hub's own resolution):
-      1. HUGGINGFACE_HUB_CACHE
-      2. HF_HOME / hub
-      3. ~/.cache/huggingface/hub   (default on all platforms)
+    This avoids drifting from the library's own environment-variable
+    handling when users configure a custom cache location.
     """
-    if "HUGGINGFACE_HUB_CACHE" in os.environ:
-        return Path(os.environ["HUGGINGFACE_HUB_CACHE"])
-    if "HF_HOME" in os.environ:
-        return Path(os.environ["HF_HOME"]) / "hub"
-    return Path.home() / ".cache" / "huggingface" / "hub"
+    from huggingface_hub import constants
+
+    return Path(constants.HF_HUB_CACHE)
 
 
 def is_model_snapshot_present(cache_dir: Path, model_id: str) -> bool:
@@ -100,8 +95,19 @@ def check_and_download_model(model_id: str, config_name: str) -> dict:
         result["status"] = "downloaded"
         logger.info(f"[OK] [{config_name}] Download complete: {download_path}")
     except Exception as e:
-        result["status"] = f"failed: {e}"
-        logger.error(f"[ERR] [{config_name}] Failed to download {model_id}: {e}")
+        # On a first run, Hugging Face can occasionally raise after the files
+        # have already landed in the cache. Re-check before marking startup as
+        # failed so users do not need to restart the server manually.
+        if is_model_snapshot_present(cache_dir, model_id):
+            result["cached"] = True
+            result["status"] = "downloaded_with_warning"
+            logger.warning(
+                f"[WARN] [{config_name}] Download reported an error, "
+                f"but cached files are present: {e}"
+            )
+        else:
+            result["status"] = f"failed: {e}"
+            logger.error(f"[ERR] [{config_name}] Failed to download {model_id}: {e}")
 
     return result
 
