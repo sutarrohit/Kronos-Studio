@@ -333,7 +333,7 @@ const TradingViewCandlestickChart = ({ data, showVolume = false }: TradingViewCa
       className={cn("relative flex size-full flex-col border bg-background", isFullscreen && "fixed inset-0 z-50 p-3")}
     >
       <div className='flex min-h-10 items-center justify-between gap-3 border-b px-2 py-1.5'>
-        <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs'>
+        <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs h-[40px]'>
           <span className='font-medium'>{data.request.symbol ?? "Unknown"}</span>
           <span className='text-muted-foreground'>{data.request.interval}</span>
           {readout && (

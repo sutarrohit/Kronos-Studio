@@ -24,10 +24,10 @@ const PredictionChart = forwardRef<HTMLDivElement, PredictionChartProps>(({ data
           onValueChange={(value) => setChartType(value === "candlestick" ? "candlestick" : "line")}
         >
           <TabsList>
-            <TabsTrigger value='candlestick' className='px-3'>
+            <TabsTrigger value='candlestick' className='px-3 cursor-pointer'>
               Candles
             </TabsTrigger>
-            <TabsTrigger value='line' className='px-3'>
+            <TabsTrigger value='line' className='px-3 cursor-pointer'>
               Line
             </TabsTrigger>
           </TabsList>
