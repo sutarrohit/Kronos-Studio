@@ -12,7 +12,8 @@ Kronos Studio gives you a no-code interface to run Kronos models, visualize OHLC
 - **Run price predictions** on any crypto or stock ticker using Kronos transformer models
 - **Choose your data source** — Binance (crypto), yFinance (stocks), or upload your own CSV
 - **Single or Batch mode** — predict one asset or many at once
-- **Interactive OHLCV charts** — history transitions smoothly into the forecast region
+- **Interactive OHLCV charts** — history transitions smoothly into the forecast region with your choice of chart style
+- **TradingView-powered charts** — switch between a standard candlestick view and a TradingView chart for a professional trading terminal feel
 - **Export results** — download charts as SVG/PNG or raw data as CSV
 - **Save & revisit** — store prediction results in a local SQLite database and browse them later
 
@@ -38,10 +39,17 @@ All saved predictions are stored locally and accessible from the **Saved Results
 
 ![Saved results page with SOLUSDT forecast](./docs/screenshots/saved.png)
 
+### 4. TradingView Chart Mode — SOLUSDT (Binance, 1h)
+
+Switch to TradingView chart mode for a professional trading terminal experience. History candles and the predicted forecast region are rendered using TradingView's familiar charting layout, with full OHLCV detail on hover.
+
+![TradingView chart mode showing SOLUSDT prediction](./docs/screenshots/tradingview.png)
+
 ## Project Structure
 
 ```
 Kronos-Studio/
+├── run-project.cmd           # One-click launcher for Windows (double-click to start)
 ├── server/                   # FastAPI prediction server (Python 3.13)
 │   ├── model/                # Kronos model definitions (PyTorch)
 │   ├── routers/              # API route handlers
@@ -87,7 +95,27 @@ pip install uv
 
 ## Getting Started
 
-### 1. Install dependencies
+### Option A — One-Click Launcher (Windows)
+
+The easiest way to get started on Windows. Simply **double-click `run-project.cmd`** from the Kronos Studio root folder.
+
+The launcher will:
+
+1. Check that Node.js, npm, and uv are installed and on your PATH
+2. Install backend dependencies (`uv sync`) if not already present
+3. Install frontend dependencies (`npm install`) if not already present
+4. Build the frontend (`npm run build`)
+5. Open two separate terminal windows — one for the API server and one for the frontend
+
+Once both windows are running, open **[http://localhost:3000](http://localhost:3000)** in your browser. You can close the launcher window after startup; the server and frontend keep running in their own windows.
+
+> **Note:** On first launch, Kronos models are downloaded automatically from Hugging Face Hub. Make sure you have an internet connection ready.
+
+### Option B — Manual Setup
+
+If you prefer to run each step yourself, open two terminals:
+
+**Install dependencies**
 
 ```bash
 # Backend
@@ -97,9 +125,7 @@ cd server && uv sync
 cd frontend && npm install
 ```
 
-### 2. Run
-
-Open two terminals:
+**Run**
 
 ```bash
 # Terminal 1 — Backend
@@ -124,6 +150,10 @@ Then open **[http://localhost:3000](http://localhost:3000)**.
 5. Set your lookback window, prediction length, and sampling parameters.
 6. Click **Predict** — the chart renders history + forecast in seconds.
 7. Use the toolbar to **Save**, export as **SVG/PNG**, or download raw **CSV**.
+
+### Switching Chart Styles
+
+After a prediction renders, use the **Candles / Line** toggle at the top of the chart panel to switch between chart types. You can also switch to **TradingView** chart mode for a full trading terminal layout — history and forecast candles are displayed side by side with TradingView's familiar interface, including OHLCV data on hover and a volume panel below.
 
 ### Batch Predictions
 
@@ -174,7 +204,10 @@ Confirm the backend is running on port `8000` and CORS middleware allows `*` in 
 **CUDA / GPU not detected**
 Set `device` to `"cpu"` in the prediction request, or ensure PyTorch with CUDA support is installed and GPU drivers are up to date.
 
+**`run-project.cmd` closes immediately**
+Make sure you are double-clicking the file from the Kronos Studio root folder (the folder that contains both `server/` and `frontend/`). If a required tool is missing, the launcher will print the error and pause before closing — read the message to see what needs to be installed.
 
+---
 
 ## Disclaimer
 
