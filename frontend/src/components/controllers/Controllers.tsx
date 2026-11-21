@@ -22,6 +22,9 @@ import DataSelector from "./DataSelector";
 import ModelSelector from "./ModelSelector";
 import BatchItemCard from "./BatchItemCard";
 
+const modeTabClassName =
+  "cursor-pointer data-active:border-emerald-500/50 data-active:bg-emerald-500/15 data-active:text-emerald-300 dark:data-active:border-emerald-500/50 dark:data-active:bg-emerald-500/15 dark:data-active:text-emerald-300";
+
 import { usePricePredictionStore, type PredictionMode } from "@/stores/pricePredictionStore";
 import { predictPrice, predictPriceBatch } from "@/lib/api";
 import { PredictionApiError } from "@/utils/handleAPI";
@@ -162,8 +165,8 @@ const Controllers = () => {
         {/* Mode toggle */}
         <Tabs value={mode} onValueChange={(value) => setMode(value as PredictionMode)} className='w-full'>
           <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='single' className="cursor-pointer">Single</TabsTrigger>
-            <TabsTrigger value='batch' className="cursor-pointer">Batch</TabsTrigger>
+            <TabsTrigger value='single' className={modeTabClassName}>Single</TabsTrigger>
+            <TabsTrigger value='batch' className={modeTabClassName}>Batch</TabsTrigger>
           </TabsList>
         </Tabs>
 

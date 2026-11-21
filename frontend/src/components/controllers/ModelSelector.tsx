@@ -53,11 +53,19 @@ export default function ModelSelector() {
       className='grid w-full grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 lg:gap-4'
     >
       {modelItems.map((item) => (
-        <FieldLabel key={item.value} htmlFor={item.value} className='relative py-1 cursor-pointer overflow-hidden'>
+        <FieldLabel
+          key={item.value}
+          htmlFor={item.value}
+          className='relative py-1 cursor-pointer overflow-hidden has-data-checked:border-emerald-500/50 has-data-checked:bg-emerald-500/10 dark:has-data-checked:border-emerald-500/50 dark:has-data-checked:bg-emerald-500/10'
+        >
           <Field orientation='horizontal'>
             <FieldTitle className='flex flex-col items-start'>
               <div className='w-full flex items-center gap-2'>
-                <RadioGroupItem value={item.value} id={item.value} />
+                <RadioGroupItem
+                  value={item.value}
+                  id={item.value}
+                  className='data-checked:border-emerald-500 data-checked:bg-emerald-500 dark:data-checked:bg-emerald-500'
+                />
                 <span className='text-sm font-semibold'>{item.title}</span>
               </div>
 
