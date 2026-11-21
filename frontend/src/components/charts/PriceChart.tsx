@@ -120,7 +120,11 @@ const PriceChart = ({ data, showVolume = true }: PriceChartProps) => {
           )}
 
           <Tooltip
-            labelFormatter={(value) => new Date(value).toLocaleString()}
+            labelFormatter={(value) =>
+              typeof value === "string" || typeof value === "number"
+                ? new Date(value).toLocaleString()
+                : value
+            }
             formatter={(value, name, props) => {
               if (value === null || value === undefined) return null;
 
